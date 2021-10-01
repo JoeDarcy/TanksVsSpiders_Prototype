@@ -17,6 +17,10 @@ public class Choices : MonoBehaviour
     // Round timer
     public float roundTimer = 0.0f;
 
+    // Player health
+    public int player1Health = 5;
+    public int player2Health = 5;
+
 
     // Start is called before the first frame update
     void Start()
@@ -51,6 +55,8 @@ public class Choices : MonoBehaviour
             Shooting.startTimer = false;
             // Reset roundTimer
             roundTimer = 2.0f;
+            // Reset player1ChoiceMade bool
+            Shooting.player1ChoiceMade = false;
         }
 
         // Turn on sprites for each players choice
@@ -78,6 +84,9 @@ public class Choices : MonoBehaviour
             p2ScissorsSprite.SetActive(true);
         }
 
-
+        // Game logic for damage and blocking
+        if (Shooting.p1RockPressed == true && Shooting.p2PaperPressed != true) {
+            player2Health -= 1;
+		}
     }
 }

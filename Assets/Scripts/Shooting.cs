@@ -18,6 +18,8 @@ public class Shooting : MonoBehaviour
 
     public static bool startTimer = false;
 
+    public static bool player1ChoiceMade = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,29 +29,22 @@ public class Shooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Fire when any key is pressed
-        if (Input.anyKeyDown) {
-            // Start global timer
-            startTimer = true;
-            // Create an instance of the bullet
-            Instantiate(bullet, spawnLocation , Quaternion.identity);
-	    }
-
+       
         // - Player 1
         // Left pressed (Rock)
-        if (Input.GetKeyDown("a")) {
+        if (Input.GetKeyDown("a") && player1ChoiceMade == false) {
             Debug.Log("LeftArrow");
             p1RockPressed = true;
         }
 
         // Up pressed (Paper)
-        if (Input.GetKeyDown("w")) {
+        if (Input.GetKeyDown("w") && player1ChoiceMade == false) {
             Debug.Log("UpArrow");
             p1PaperPressed = true;
 	    }
 
         // Right pressed (Scissors)
-        if (Input.GetKeyDown("d")) {
+        if (Input.GetKeyDown("d") && player1ChoiceMade == false) {
             Debug.Log("RightArrow");
             p1ScissorsPressed = true;
         }
@@ -73,5 +68,20 @@ public class Shooting : MonoBehaviour
             p2ScissorsPressed = true;
         }
 
+
+        // Fire when any key is pressed
+        if (Input.anyKeyDown) {
+            // Start global timer
+            startTimer = true;
+            // Fire gun
+            FireGun();
+            // Lock shooting (choice made)
+            player1ChoiceMade = true;
+        }
     }   
+
+    void FireGun() {
+        // Create an instance of the bullet
+        Instantiate(bullet, spawnLocation, Quaternion.identity);
+    }
 }
