@@ -6,6 +6,7 @@ public class Shooting : MonoBehaviour
 {
     [SerializeField] private GameObject bullet = null;
     private Vector3 spawnLocation;
+    private GameObject bulletInstance = null;
 
     // Public Choices
     public static bool p1RockPressed = false;
@@ -81,7 +82,11 @@ public class Shooting : MonoBehaviour
     }   
 
     void FireGun() {
-        // Create an instance of the bullet
-        Instantiate(bullet, spawnLocation, Quaternion.identity);
+	    // Create an instance of the bullet if an instance doesn't exist
+	    if (bulletInstance == null)
+	    {
+		    bulletInstance = Instantiate(bullet, spawnLocation, Quaternion.identity);
+        }
+        
     }
 }

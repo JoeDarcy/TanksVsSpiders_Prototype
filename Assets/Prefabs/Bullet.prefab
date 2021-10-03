@@ -4964,6 +4964,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletRb: {fileID: 9078344535364924394}
   push: 8
+  bulletInstance: {fileID: 1485271856865686385}
 --- !u!1 &3399920046963662464
 GameObject:
   m_ObjectHideFlags: 0
