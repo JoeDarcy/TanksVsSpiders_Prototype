@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Choices : MonoBehaviour
@@ -9,17 +10,25 @@ public class Choices : MonoBehaviour
     [SerializeField] GameObject p1RockSprite = null;
     [SerializeField] GameObject p1PaperSprite = null;
     [SerializeField] GameObject p1ScissorsSprite = null;
+    // Player_1 Hearts
+    [SerializeField] GameObject p1heart1 = null;
+    [SerializeField] GameObject p1heart2 = null;
+    [SerializeField] GameObject p1heart3 = null;
     // Sprite Player_2
     [SerializeField] GameObject p2RockSprite = null;
     [SerializeField] GameObject p2PaperSprite = null;
     [SerializeField] GameObject p2ScissorsSprite = null;
+    // Player_2 Hearts
+    [SerializeField] GameObject p2heart1 = null;
+    [SerializeField] GameObject p2heart2 = null;
+    [SerializeField] GameObject p2heart3 = null;
 
     // Round timer
     public float roundTimer = 0.0f;
 
     // Player health
-    public int player1Health = 5;
-    public int player2Health = 5;
+    public int player1Health = 3;
+    public int player2Health = 3;
 
 
     // Start is called before the first frame update
@@ -87,6 +96,55 @@ public class Choices : MonoBehaviour
         // Game logic for damage and blocking
         if (Shooting.p1RockPressed == true && Shooting.p2PaperPressed != true) {
             player2Health -= 1;
-		}
+            Debug.Log("Player 2 health: " + player2Health);
+            Shooting.p1RockPressed = false;
+        }
+
+
+
+        // Heart controller
+        //Player_1
+        if (player1Health == 3)
+        {
+            p1heart1.SetActive(true);
+            p1heart2.SetActive(true);
+            p1heart3.SetActive(true);
+        }
+        else if (player1Health == 2)
+        {
+	        p1heart1.SetActive(true);
+	        p1heart2.SetActive(true);
+	        p1heart3.SetActive(false);
+        } 
+        else if (player1Health == 1) {
+	        p1heart1.SetActive(true);
+	        p1heart2.SetActive(false);
+	        p1heart3.SetActive(false);
+        } 
+        else if (player1Health == 0)
+        {
+	        p1heart1.SetActive(false);
+	        p1heart2.SetActive(false);
+	        p1heart3.SetActive(false);
+        }
+
+        //Player_2
+        if (player2Health == 3) {
+	        p2heart1.SetActive(true);
+	        p2heart2.SetActive(true);
+	        p2heart3.SetActive(true);
+        } else if (player2Health == 2) {
+	        p2heart1.SetActive(true);
+	        p2heart2.SetActive(true);
+	        p2heart3.SetActive(false);
+        } else if (player2Health == 1) {
+	        p2heart1.SetActive(true);
+	        p2heart2.SetActive(false);
+	        p2heart3.SetActive(false);
+        } else if (player2Health == 0) {
+	        p2heart1.SetActive(false);
+	        p2heart2.SetActive(false);
+	        p2heart3.SetActive(false);
+        }
     }
 }
