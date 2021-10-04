@@ -84,7 +84,7 @@ public class gestures : MonoBehaviour
 
     bool IsScissors(Hand hand)
     {
-        //this is not precise lol 
+        if (CountExtended(hand) == 0) return false;
         return WithinThreshold(hand.PalmNormal.Roll, 1.50f, rollTolerance);
     }
 
