@@ -13,66 +13,86 @@ public class gestures : MonoBehaviour
     [SerializeField]
     float rollTolerance = 0.1f;
     [SerializeField]
-    LeapProvider controller;
+    LeapServiceProvider provider;
     [SerializeField]
     Text debugText;
-
+    [SerializeField]
+    Text debugText2;
     bool listening;
 
+    PlayerHand p1;
+    PlayerHand p2;
 
     // Start is called before the first frame update
+    public class PlayerHand {
+        public Hand hand;
+        public Gesture gesture;
+    }
     void Start()
     {
+        p1 = new PlayerHand();
+        p2 = new PlayerHand();
+        p1.gesture = Gesture.NONE;
+        p2.gesture = Gesture.NONE;
         Debug.Log("starting...");
         listening = true;
-        last = Gesture.NONE;
     }
 
-    enum Gesture
+     public enum Gesture
     {
         ROCK,
         PAPER,
         SCISSORS,
         NONE
     }
-
-    Gesture last;
     // Update is called once per frame
     void Update()
     {
         if (listening)
         {
-            Frame frame = controller.CurrentFrame;
-            foreach (Hand h in frame.Hands)
+            Frame frame = provider.CurrentFrame;
+            foreach (Hand h in frame.Hands) //leftmost and rightmost is depricated so we have to assume one person is using left hand and one is using right hand
+
             {
-                PrintHandInfo(h);
-                if (last != Gesture.ROCK && IsRock(h))
-                {
-                    Debug.Log("Rock");
-                    last = Gesture.ROCK;
+                PlayerHand current = null;
+                if (h.IsLeft) {
+                    current = p1;
+                    p1.hand = h;
                 }
-                else if (last != Gesture.SCISSORS && IsScissors(h))
-                {
-                    Debug.Log("Scissors");
-                    last = Gesture.SCISSORS;
+                else if (h.IsRight) {
+                    current = p2;
+                    p2.hand = h;
                 }
-                else if (last != Gesture.PAPER && IsPaper(h))
+                else Debug.Log("failed to assign players");
+
+                if (IsRock(h))
                 {
-                    Debug.Log("Paper");
-                    last = Gesture.PAPER;
+                    current.gesture = Gesture.ROCK;
                 }
+                else if (IsPaper(h))
+                {
+                    current.gesture = Gesture.PAPER;
+                }
+                else if (IsScissors(h))
+                {
+                    current.gesture = Gesture.SCISSORS;
+                }
+                PrintHandInfo(current);
             }
         }
     }
 
 
 
-    void PrintHandInfo(Hand hand)
+    void PrintHandInfo(PlayerHand ph)
     {
-        debugText.text = "pitch: " + hand.Direction.Pitch +
-        "\nyaw: " + hand.Direction.Yaw +
-        "\nroll:" + hand.PalmNormal.Roll +
-        "\n" + last.ToString();
+        Text current;
+        if (ph == p1) current = debugText;
+        else current = debugText2;
+        current.text = "pitch: " + ph.hand.Direction.Pitch +
+        "\nyaw: " + ph.hand.Direction.Yaw +
+        "\nroll:" + ph.hand.PalmNormal.Roll +
+        "\n" + ph.gesture.ToString();
     }
 
     bool WithinThreshold(float value, float target, float thresh)
@@ -85,7 +105,7 @@ public class gestures : MonoBehaviour
     bool IsScissors(Hand hand)
     {
         if (CountExtended(hand) == 0) return false;
-        return WithinThreshold(hand.PalmNormal.Roll, 1.50f, rollTolerance);
+        return WithinThreshold(hand.PalmNormal.Roll, 1.50f, rollTolerance) || WithinThreshold(hand.PalmNormal.Roll, -1.50f, rollTolerance);
     }
 
     int CountExtended(Hand hand)
@@ -118,7 +138,7 @@ public class gestures : MonoBehaviour
             Vector intermedial = f.bones[(int)Bone.BoneType.TYPE_INTERMEDIATE].Direction;
             sum += metacarpal.Dot(proximal) + proximal.Dot(intermedial);
         }
-        return ((sum / hand.Fingers.Count) < fistThreshold);
+        return (sum / hand.Fingers.Count) < fistThreshold;
   ;
     }
 }
