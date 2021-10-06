@@ -11,7 +11,16 @@ public class handmanager : MonoBehaviour
 {
 
     [SerializeField]
+    GameObject p1Sprites;
+
+    [SerializeField]
+    GameObject p2Sprites;
+
+    [SerializeField]
     float roundLength;
+
+    [SerializeField]
+    float postRoundLength;
     [SerializeField]
     Text roundText;
 
@@ -41,11 +50,14 @@ public class handmanager : MonoBehaviour
         public Hand hand;
         public gestures.Gesture gesture;
         public GameObject model;
+        public GameObject sprites;
+ 
     }
 
     private bool listening;
     private float bounds;
     private float roundTimer;
+    private float postRoundTimer;
     int rounds = 1;
     bool roundstart = false;
 
@@ -56,24 +68,36 @@ public class handmanager : MonoBehaviour
         p1 = new PlayerHand();
         p2 = new PlayerHand();
         Debug.Log("starting...");
-        listening = true;
+        listening = false;
+        roundstart = true;
         bounds = (floor.transform.position + floor.transform.lossyScale / 2).z;
         p1.model = p1Model;
         p2.model = p2Model;
         p1.gesture = gestures.Gesture.NONE;
         p2.gesture = gestures.Gesture.NONE;
         roundTimer = roundLength;
+        postRoundTimer = postRoundLength;
+        p1.sprites = p1Sprites;
+        p2.sprites = p2Sprites;
+        playerhands = new List<PlayerHand>();
+        playerhands.Add(p1);
+        playerhands.Add(p2);
     }
+
+    List<PlayerHand> playerhands;
 
     // Update is called once per frame
     void Update()
     {
         Frame frame = provider.CurrentFrame;
+        if (frame.Hands.Count >= 2) listening = true;
         if (listening)
-        {
-            if (frame.Hands.Count >= 2) roundstart = true;
-            roundText.text = "Round " + rounds + "\n" +  Mathf.CeilToInt(roundTimer).ToString();
-            if(roundstart) roundTimer -= Time.deltaTime;
+        {           
+            if (roundstart)
+            {
+                roundTimer -= Time.deltaTime;
+                roundText.text = "Round " + rounds + "\n" + Mathf.CeilToInt(roundTimer).ToString();
+            }
             foreach(Hand h in frame.Hands)
             {
                 PlayerHand current = AssignPlayerHand(h);
@@ -82,7 +106,7 @@ public class handmanager : MonoBehaviour
                 PrintHandInfo(current);            
             }
 
-            if(roundTimer <= 0)
+            if(roundTimer <= 0 && postRoundTimer == postRoundLength)
             {
                 result = HandleRoundResult();            
                 rounds++;
@@ -90,19 +114,55 @@ public class handmanager : MonoBehaviour
                 {                 
                     p1.model.GetComponentInChildren<Shooting>().FireGun();
                     Choices.player2Health--;
+                    
                 }
                 else if (result == RoundResult.P2WIN)
                 {
                     p2.model.GetComponentInChildren<Shooting>().FireGun();
                     Choices.player1Health--;
+                    
                 }
 
-                //todo process round results with the shooting
+                foreach (PlayerHand ph in playerhands)
+                {
+                    foreach (Transform child in ph.sprites.transform)
+                    {
+                        if (child.gameObject.name.ToLower() == ph.gesture.ToString().ToLower())
+                        {
+                            child.gameObject.SetActive(true);
+                        }
+                        else child.gameObject.SetActive(false);
+                    }
+                }
+                //^ this is terrible but i forgot how to code and the presentation is tomorrow
+
                 roundTimer = roundLength;
                 result = RoundResult.NONE;
+                roundstart = false;
+            }
+            else if(!roundstart)
+            {
+                postRoundTimer -= Time.deltaTime;
+                roundText.text = "Get Ready: " + Mathf.CeilToInt(postRoundTimer).ToString();
+                if (postRoundTimer <= 0)
+                {
+                    postRoundTimer = postRoundLength;
+                    roundstart = true;
+                    foreach (PlayerHand ph in playerhands)
+                    {
+                        foreach (Transform child in ph.sprites.transform)
+                        {
+                            child.gameObject.SetActive(false);
+                        }
+                    }
+                    //same thing here 
+
+                }
             }
         }
     }
+
+
 
     enum RoundResult
     {
