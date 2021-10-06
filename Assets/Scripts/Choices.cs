@@ -27,8 +27,10 @@ public class Choices : MonoBehaviour
     public float roundTimer = 0.0f;
 
     // Player health
-    public int player1Health = 3;
-    public int player2Health = 3;
+    public static int player1Health = 3;
+    public static int player2Health = 3;
+
+   
 
 
     // Start is called before the first frame update
