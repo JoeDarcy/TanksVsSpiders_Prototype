@@ -72,7 +72,7 @@ public class handmanager : MonoBehaviour
         if (listening)
         {
             if (frame.Hands.Count >= 2) roundstart = true;
-            roundText.text = "Round " + rounds + "\n" +  Mathf.CeilToInt(roundTimer).ToString();
+            //roundText.text = "Round " + rounds + "\n" +  Mathf.CeilToInt(roundTimer).ToString();
             if(roundstart) roundTimer -= Time.deltaTime;
             foreach(Hand h in frame.Hands)
             {
