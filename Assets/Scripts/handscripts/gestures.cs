@@ -45,10 +45,7 @@ public static class gestures
 
     private static bool IsPaper(Hand hand)
     {
-        foreach (Finger f in hand.Fingers)
-        {
-            if (!f.IsExtended) return false;
-        }
+        if (CountExtended(hand) != hand.Fingers.Count);
         return utilities.WithinThreshold(hand.PalmNormal.Roll, 0, rollTolerance);
     } 
 
