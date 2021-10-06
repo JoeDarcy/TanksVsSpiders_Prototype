@@ -17,6 +17,7 @@ public static class gestures
         ROCK,
         PAPER,
         SCISSORS,
+        NONE
     }
 
     public static void HandleGestures(handmanager.PlayerHand ph)
@@ -25,8 +26,7 @@ public static class gestures
         else if (IsPaper(ph.hand)) ph.gesture = Gesture.PAPER;
         else if (IsScissors(ph.hand)) ph.gesture = Gesture.SCISSORS;
     }
-   
-  
+
     private static bool IsScissors(Hand hand)
     {
         if (CountExtended(hand) == 0) return false;

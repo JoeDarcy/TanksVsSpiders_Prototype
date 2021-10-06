@@ -21,16 +21,17 @@ public class Shooting : MonoBehaviour
 
     public static bool player1ChoiceMade = false;
 
+
     // Start is called before the first frame update
     void Start()
     {
-        spawnLocation = new Vector3(transform.position.x + 0.5f, transform.position.y, transform.position.z);
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-       
+        spawnLocation = new Vector3(transform.position.x + 0.5f, transform.position.y, transform.position.z); //moved this line of code so that the shot comes from correct position even if the player has moved - Zac
         // - Player 1
         // Left pressed (Rock)
         if (Input.GetKeyDown("a") && player1ChoiceMade == false) {
@@ -81,7 +82,7 @@ public class Shooting : MonoBehaviour
         }
     }   
 
-    void FireGun() {
+    public void FireGun() {
 	    // Create an instance of the bullet if an instance doesn't exist
 	    if (bulletInstance == null)
 	    {
